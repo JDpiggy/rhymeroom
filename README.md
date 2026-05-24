@@ -1,7 +1,7 @@
 # RhymeRoom – Free Online Rap Lyric Writing Studio
 
 RhymeRoom is a simple web app for rappers and songwriters to write, edit, and test lyrics while listening to beats in real time. It runs in the browser, saves your work locally, and is meant to feel like a focused writing notebook.
-
+## Visit the website [here](https://jdpiggy.github.io/rhymeroom/)!
 ## Features
 
 ### Core lyric editor
