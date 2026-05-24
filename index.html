@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RhymeRoom - Free Online Rap Lyric Writing Studio with Beat Player & Recorder</title>
+    <meta name="description" content="RhymeRoom is a free online rap lyric writing studio. Write lyrics, upload beats, record your flows, and organize your rap projects with autosave and rhyme detection.">
+    <meta name="keywords" content="rap lyrics, lyric writing, rap studio, beat player, rap recorder, rhyme checker, hip hop, free rap app, online lyric editor">
+    <meta name="author" content="Jaron Dembsky">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#ff006e">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://rhymeroom.app/">
+    <meta property="og:title" content="RhymeRoom - Free Online Rap Lyric Writing Studio">
+    <meta property="og:description" content="Write lyrics, upload beats, record your flows, and organize your rap projects with autosave and rhyme detection.">
+    <meta property="og:image" content="">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://rhymeroom.app/">
+    <meta property="twitter:title" content="RhymeRoom - Free Online Rap Lyric Writing Studio">
+    <meta property="twitter:description" content="Write lyrics, upload beats, record your flows, and organize your rap projects with autosave and rhyme detection.">
+    <meta property="twitter:image" content="">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://rhymeroom.app/">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎤</text></svg>">
+
+    <!-- Structured Data (JSON-LD) for SEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "RhymeRoom",
+        "description": "Free online rap lyric writing studio with beat player, recorder, and rhyme detection",
+        "url": "https://rhymeroom.app/",
+        "applicationCategory": "MusicApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "Lyric writing editor",
+            "Beat upload and playback",
+            "Audio recording",
+            "Rhyme detection",
+            "Autosave",
+            "Multiple project management",
+            "Metronome",
+            "Fullscreen rhythm mode"
+        ],
+        "author": {
+            "@type": "Person",
+            "name": "Jaron Dembsky"
+        }
+    }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Spicy+Rice&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <h1 class="app-title">🎤 RhymeRoom</h1>
+                <div class="project-selector">
+                    <select id="projectSelect" class="project-dropdown">
+                        <option value="">Select a project...</option>
+                    </select>
+                    <button id="newProjectBtn" class="btn btn-small btn-primary" title="Create new project">+</button>
+                </div>
+            </div>
+            <div class="header-center">
+                <div class="tab-navigation">
+                    <button class="tab-btn active" data-tab="editor" title="Editor">📝 Editor</button>
+                    <button class="tab-btn ai-tab" data-tab="ai" title="AI Assistant">🤖 AI Assistant</button>
+                    <button class="tab-btn" data-tab="rhythm" title="Fullscreen Beat">🎶 Rhythm</button>
+                    <button class="tab-btn" data-tab="record" title="Record">🎙️ Record</button>
+                    <button class="tab-btn" data-tab="settings" title="Settings">⚙️ Settings</button>
+                </div>
+            </div>
+            <div class="header-right">
+                <button id="themeToggle" class="btn btn-small" title="Toggle theme">🌑</button>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Editor Tab -->
+            <div class="tab-content active" id="editorTab">
+                <!-- Left Panel: Editor -->
+                <section class="editor-section">
+                <div class="editor-toolbar">
+                    <div class="toolbar-left">
+                        <input 
+                            type="text" 
+                            id="projectName" 
+                            class="project-name-input" 
+                            placeholder="Untitled Project" 
+                            maxlength="50"
+                        >
+                        <span class="auto-save-indicator" id="autoSaveIndicator">Saved</span>
+                    </div>
+                    <div class="toolbar-right">
+                        <button id="clearEditorBtn" class="btn btn-small btn-danger" title="Clear editor">Clear</button>
+                    </div>
+                </div>
+
+                <div class="editor-wrapper">
+                    <div class="line-numbers" id="lineNumbers"></div>
+                    <div class="highlight-overlay" id="highlightOverlay"></div>
+                    <textarea 
+                        id="lyricsEditor" 
+                        class="lyrics-editor" 
+                        placeholder="Start writing your bars here...&#10;&#10;Tips:&#10;• Press Enter for new line&#10;• Use rhyme checker to find matching patterns&#10;• Listen to beats while you write&#10;&#10;Example:&#10;I'm the king of the mic, yeah I'm feeling alright&#10;Every single night I'm making lyrics so tight"
+                    ></textarea>
+                </div>
+            </section>
+
+            <!-- Right Panel: Controls -->
+            <aside class="control-panel">
+                <!-- Beat Embed Section -->
+                <div class="panel-section beat-section">
+                    <h3 class="section-title">🎵 Beat</h3>
+                    <div class="beat-input-group">
+                        <input 
+                            type="text" 
+                            id="beatUrl" 
+                            class="beat-url-input" 
+                            placeholder="Paste YouTube, Spotify, or SoundCloud link"
+                        >
+                        <button id="embedBeatBtn" class="btn btn-small btn-primary">Embed</button>
+                    </div>
+                    <div id="beatEmbed" class="beat-embed-container"></div>
+                    <div class="volume-control" style="margin-top: 8px; display: none; align-items: center; gap: 8px;" id="beatVolumeControl">
+                        <label style="font-size: 11px; color: var(--text-secondary); white-space: nowrap;">🔊 Beat Volume</label>
+                        <input type="range" id="beatVolume" min="0" max="1" step="0.01" value="1" style="flex: 1;">
+                    </div>
+                    <div class="beat-file-group">
+                        <label class="file-label">
+                            <input type="file" id="beatFileInput" accept="audio/*,video/*" style="display: none;">
+                            <span class="file-btn" id="beatFileUploadBtn">📁 Upload File</span>
+                        </label>
+                        <span id="beatFileName" class="file-name"></span>
+                    </div>
+                    <button id="clearBeatBtn" class="btn btn-small btn-secondary" style="display: none;">Remove Beat</button>
+
+                    <!-- My Beats Section -->
+                    <div class="my-beats-section" style="margin-top: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <h4 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">📚 My Beats</h4>
+                            <button id="saveCurrentBeatBtn" class="btn btn-small btn-secondary" style="padding: 4px 8px; font-size: 11px;">Save Current</button>
+                        </div>
+                        <div id="myBeatsList" class="my-beats-list">
+                            <p style="font-size: 12px; color: var(--text-secondary); text-align: center; padding: 8px;">No saved beats</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rhyme Checker Section -->
+                <div class="panel-section rhyme-section">
+                    <h3 class="section-title">🔤 Rhyme Check</h3>
+                    
+                    <div class="ai-toggle-prominent">
+                        <label class="ai-toggle-label">
+                            <input type="checkbox" id="aiRhymeToggleMain">
+                            <span class="ai-toggle-text">🤖 AI-Powered Rhyme Detection</span>
+                        </label>
+                        <span class="ai-toggle-status" id="aiToggleStatus">Disabled</span>
+                    </div>
+                    
+                    <div class="rhyme-controls">
+                        <label class="control-label">Mode:</label>
+                        <select id="rhymeCompareMode" class="control-select">
+                            <option value="lastWord">Last Word</option>
+                            <option value="last2Words">Last 2 Words</option>
+                            <option value="lastSyllable">Last Syllable</option>
+                            <option value="last2Syllables">Last 2 Syllables</option>
+                        </select>
+
+                        <label class="control-label">Target Line:</label>
+                        <input 
+                            type="number" 
+                            id="rhymeTargetLine" 
+                            class="line-input" 
+                            min="1" 
+                            placeholder="Line #"
+                            value="1"
+                        >
+
+                        <button id="runRhymeCheckBtn" class="btn btn-full btn-primary">Highlight Rhymes</button>
+                        <button id="clearHighlightBtn" class="btn btn-full btn-secondary" style="display: none;">Clear Highlights</button>
+                        <label class="toggle-label">
+                            <input type="checkbox" id="autoRhymeCheck">
+                            <span>Auto-highlight</span>
+                        </label>
+                    </div>
+
+                    <div id="rhymeResults" class="rhyme-results">
+                        <p class="results-placeholder">Highlights appear in editor</p>
+                    </div>
+
+                    <div class="rhyme-score-section">
+                        <h4 class="rhyme-score-title">📊 Overall Rhyme Score</h4>
+                        <div class="rhyme-score-display">
+                            <div class="rhyme-score-value" id="rhymeScoreValue">--</div>
+                            <div class="rhyme-score-bar">
+                                <div class="rhyme-score-fill" id="rhymeScoreFill"></div>
+                            </div>
+                        </div>
+                        <div class="rhyme-score-details" id="rhymeScoreDetails">
+                            <div class="score-detail">
+                                <span class="detail-label">Avg Strength:</span>
+                                <span class="detail-value" id="avgStrengthValue">--</span>
+                            </div>
+                            <div class="score-detail">
+                                <span class="detail-label">Rhyme Density:</span>
+                                <span class="detail-value" id="rhymeDensityValue">--</span>
+                            </div>
+                            <div class="score-detail">
+                                <span class="detail-label">Scheme:</span>
+                                <span class="detail-value" id="schemeValue">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+            </div>
+
+            <!-- AI Assistant Tab -->
+            <div class="tab-content" id="aiTab">
+                <section class="ai-section">
+                    <div class="ai-container">
+                        <div class="ai-header">
+                            <h2 class="ai-title">🤖 AI Lyric Assistant</h2>
+                            <p class="ai-subtitle">Powered by Qwen - Get intelligent help with your lyrics</p>
+                        </div>
+
+                        <div class="ai-split">
+                            <!-- AI Chat Panel -->
+                            <div class="ai-main">
+                                <div class="ai-chat-container">
+                                    <div class="ai-chat-messages" id="aiChatMessages">
+                                        <div class="ai-message ai-assistant">
+                                            <div class="ai-message-content">
+                                                <p>👋 Hey! I'm your AI lyric assistant. I can help you with:</p>
+                                                <ul>
+                                                    <li>🎯 Finding perfect rhymes for your words</li>
+                                                    <li>✨ Improving your flow and word choice</li>
+                                                    <li>💡 Generating creative lyric suggestions</li>
+                                                    <li>🔍 Analyzing rhyme schemes and patterns</li>
+                                                </ul>
+                                                <p>Just ask me anything about your lyrics!</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="ai-chat-input-container">
+                                        <textarea 
+                                            id="aiChatInput" 
+                                            class="ai-chat-input" 
+                                            placeholder="Ask for help with your lyrics... (e.g., 'Find rhymes for fire', 'Improve this line', 'Suggest a hook')"
+                                            rows="3"
+                                        ></textarea>
+                                        <button id="aiSendBtn" class="btn btn-primary ai-send-btn">Send 🚀</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- AI Tools Panel -->
+                            <div class="ai-sidebar">
+                                <div class="ai-tools-card">
+                                    <h3 class="ai-tools-title">🎯 Quick AI Tools</h3>
+                                    
+                                    <div class="ai-tool">
+                                        <label class="ai-tool-label">Find Rhymes For:</label>
+                                        <input type="text" id="aiRhymeWord" class="ai-tool-input" placeholder="Enter a word...">
+                                        <button id="aiFindRhymesBtn" class="btn btn-full btn-secondary">Find Rhymes 🔍</button>
+                                        <div id="aiRhymeResults" class="ai-tool-results"></div>
+                                    </div>
+
+                                    <div class="ai-tool">
+                                        <label class="ai-tool-label">Improve Selected Line:</label>
+                                        <textarea id="aiImproveInput" class="ai-tool-input" placeholder="Paste a line to improve..." rows="2"></textarea>
+                                        <button id="aiImproveBtn" class="btn btn-full btn-secondary">Improve ✨</button>
+                                        <div id="aiImproveResults" class="ai-tool-results"></div>
+                                    </div>
+
+                                    <div class="ai-tool">
+                                        <label class="ai-tool-label">Generate Hook Ideas:</label>
+                                        <input type="text" id="aiHookTopic" class="ai-tool-input" placeholder="Topic or theme...">
+                                        <button id="aiGenerateHookBtn" class="btn btn-full btn-secondary">Generate Hook 💡</button>
+                                        <div id="aiHookResults" class="ai-tool-results"></div>
+                                    </div>
+
+                                    <div class="ai-tool">
+                                        <label class="ai-tool-label">Analyze Current Lyrics:</label>
+                                        <button id="aiAnalyzeBtn" class="btn btn-full btn-secondary">Analyze 📊</button>
+                                        <div id="aiAnalyzeResults" class="ai-tool-results"></div>
+                                    </div>
+                                </div>
+
+                                <div class="ai-status-card">
+                                    <h3 class="ai-status-title">⚡ AI Status</h3>
+                                    <div class="ai-status-content">
+                                        <div class="ai-status-item">
+                                            <span class="ai-status-label">AI Detection:</span>
+                                            <span id="aiStatusDetection" class="ai-status-value">Disabled</span>
+                                        </div>
+                                        <div class="ai-status-item">
+                                            <span class="ai-status-label">API Key:</span>
+                                            <span id="aiStatusKey" class="ai-status-value">Not configured</span>
+                                        </div>
+                                        <div class="ai-status-item">
+                                            <span class="ai-status-label">Model:</span>
+                                            <span class="ai-status-value">Qwen 2 7B</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Rhythm Tab -->
+            <div class="tab-content" id="rhythmTab">
+                <section class="rhythm-section">
+                    <div class="rhythm-container">
+                        <div class="rhythm-split">
+                            <!-- Metronome -->
+                            <div class="rhythm-third">
+                                <div class="rhythm-panel-header">
+                                    <h3 class="rhythm-panel-title">🎯 Metronome</h3>
+                                </div>
+                                <div class="rhythm-panel-content">
+                                    <div class="metronome-container">
+                                        <div class="metronome-display">
+                                            <div class="bpm-display">
+                                                <span id="bpmValue" class="bpm-value">120</span>
+                                                <span class="bpm-label">BPM</span>
+                                            </div>
+                                            <div class="bpm-slider-container">
+                                                <input
+                                                    type="range"
+                                                    id="bpmSlider"
+                                                    class="bpm-slider"
+                                                    min="40"
+                                                    max="240"
+                                                    value="120"
+                                                >
+                                                <div class="bpm-input-group">
+                                                    <input
+                                                        type="number"
+                                                        id="bpmInput"
+                                                        class="bpm-input"
+                                                        value="120"
+                                                    >
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="metronome-controls">
+                                            <div class="sound-selector">
+                                                <label class="control-label">Sound</label>
+                                                <select id="metronomeSound" class="control-select">
+                                                    <option value="click">Click</option>
+                                                    <option value="beep">Beep</option>
+                                                    <option value="wood">Wood Block</option>
+                                                    <option value="digital">Digital</option>
+                                                </select>
+                                            </div>
+                                            <div class="volume-control" style="margin-top: 8px; display: flex; align-items: center; gap: 8px;">
+                                                <label class="control-label">🔊 Volume</label>
+                                                <input type="range" id="metronomeVolume" min="0" max="1" step="0.01" value="0.5" style="flex: 1;">
+                                            </div>
+                                            <button id="metronomePlayBtn" class="btn btn-primary btn-full">
+                                                ▶ Play
+                                            </button>
+                                        </div>
+                                        <div class="metronome-visual">
+                                            <div id="metronomeIndicator" class="metronome-indicator"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tap Tempo -->
+                            <div class="rhythm-third">
+                                <div class="rhythm-panel-header">
+                                    <h3 class="rhythm-panel-title">⏱️ Tap Tempo</h3>
+                                </div>
+                                <div class="rhythm-panel-content">
+                                    <iframe
+                                        src="https://taptempo.io/"
+                                        class="taptempo-iframe"
+                                        title="Tap Tempo"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowfullscreen
+                                    ></iframe>
+                                </div>
+                            </div>
+
+                            <!-- Beat Player -->
+                            <div class="rhythm-third">
+                                <div class="rhythm-panel-header">
+                                    <h3 class="rhythm-panel-title">🎵 Beat Player</h3>
+                                </div>
+                                <div class="rhythm-panel-content" style="overflow-y: auto; max-height: 100%;">
+                                    <div id="rhythmBeatEmbed" class="rhythm-beat-embed"></div>
+                                    <div class="volume-control" style="margin-top: 8px; display: none; align-items: center; gap: 8px;" id="rhythmBeatVolumeControl">
+                                        <label style="font-size: 11px; color: var(--text-secondary); white-space: nowrap;">🔊 Beat Volume</label>
+                                        <input type="range" id="rhythmBeatVolume" min="0" max="1" step="0.01" value="1" style="flex: 1;">
+                                    </div>
+                                    <div class="rhythm-controls">
+                                        <div class="rhythm-input-group">
+                                            <input
+                                                type="text"
+                                                id="rhythmBeatUrl"
+                                                class="beat-url-input"
+                                                placeholder="Paste YouTube, Spotify, or SoundCloud link"
+                                            >
+                                            <button id="rhythmEmbedBeatBtn" class="btn btn-small btn-primary">Embed</button>
+                                            <button id="rhythmClearBeatBtn" class="btn btn-small btn-secondary" style="display: none;">Remove Beat</button>
+                                        </div>
+                                        <div class="beat-file-group">
+                                            <label class="file-label">
+                                                <input type="file" id="rhythmBeatFileInput" accept="audio/*,video/*" style="display: none;">
+                                                <span class="file-btn">📁 Upload File</span>
+                                            </label>
+                                            <span id="rhythmBeatFileName" class="file-name"></span>
+                                        </div>
+                                        <p class="rhythm-placeholder" id="rhythmPlaceholder">Paste a beat link above to play 🎵</p>
+
+                                        <!-- My Beats Section -->
+                                        <div class="my-beats-section" style="margin-top: 12px;">
+                                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                                <h4 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">📚 My Beats</h4>
+                                                <button id="saveRhythmBeatBtn" class="btn btn-small btn-secondary" style="padding: 4px 8px; font-size: 11px;">Save Current</button>
+                                            </div>
+                                            <div id="rhythmMyBeatsList" class="my-beats-list">
+                                                <p style="font-size: 12px; color: var(--text-secondary); text-align: center; padding: 8px;">No saved beats</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Record Tab -->
+            <div class="tab-content" id="recordTab">
+                <section class="record-section">
+                    <!-- Record Setup Panel -->
+                    <div class="record-setup-panel" id="recordSetupPanel">
+                        <div class="record-setup-container">
+                            <h2 class="record-title">🎙️ Recording Setup</h2>
+
+                            <div class="record-setup-grid">
+                                <!-- Volume Controls -->
+                                <div class="record-volume-controls">
+                                    <div class="record-volume-item">
+                                        <label class="record-label">🎵 Beat Volume</label>
+                                        <input type="range" id="recordBeatVolume" min="0" max="1" step="0.01" value="1" class="record-volume-slider">
+                                    </div>
+                                    <div class="record-volume-item">
+                                        <label class="record-label">🎯 Metronome Volume</label>
+                                        <input type="range" id="recordMetronomeVolume" min="0" max="1" step="0.01" value="0.5" class="record-volume-slider">
+                                    </div>
+                                </div>
+
+                                <!-- Audio Device Selection -->
+                                <div class="record-device-controls">
+                                    <div class="record-device-item">
+                                        <label class="record-label">🎤 Input Device</label>
+                                        <select id="inputDeviceSelect" class="record-device-select">
+                                            <option value="">Select input device...</option>
+                                        </select>
+                                    </div>
+                                    <div class="record-device-item">
+                                        <label class="record-label">🔊 Output Device</label>
+                                        <select id="outputDeviceSelect" class="record-device-select">
+                                            <option value="">Select output device...</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- File Format Selection -->
+                                <div class="record-format-controls">
+                                    <label class="record-label">📁 File Format</label>
+                                    <div class="record-format-options">
+                                        <label class="record-format-option">
+                                            <input type="radio" name="recordFormat" value="wav" checked>
+                                            <span>WAV</span>
+                                        </label>
+                                        <label class="record-format-option">
+                                            <input type="radio" name="recordFormat" value="mp3">
+                                            <span>MP3</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Enter Record Mode Button -->
+                            <button id="enterRecordModeBtn" class="btn btn-primary btn-full btn-large">🎙️ Enter Record Mode</button>
+                        </div>
+                    </div>
+
+                    <!-- Record Mode Panel (Fullscreen) -->
+                    <div class="record-mode-panel" id="recordModePanel" style="display: none;">
+                        <!-- Beat Embed (Hidden) -->
+                        <div id="recordBeatEmbed" style="display: none;"></div>
+
+                        <!-- Lyrics Display -->
+                        <div class="record-lyrics-display" id="recordLyricsDisplay">
+                            <div class="record-lyrics-content" id="recordLyricsContent"></div>
+                        </div>
+
+                        <!-- Beat Progress -->
+                        <div class="record-beat-progress">
+                            <div class="record-progress-bar">
+                                <div class="record-progress-fill" id="recordProgressFill"></div>
+                            </div>
+                            <div class="record-time-display">
+                                <span id="recordCurrentTime">0:00</span>
+                                <span id="recordTotalTime">0:00</span>
+                            </div>
+                        </div>
+
+                        <!-- Recording Controls -->
+                        <div class="record-controls">
+                            <button id="startRecordingBtn" class="btn btn-primary btn-large">⏺️ Start Recording</button>
+                            <button id="stopRecordingBtn" class="btn btn-danger btn-large" style="display: none;">⏹️ Stop Recording</button>
+                            <button id="exitRecordModeBtn" class="btn btn-secondary btn-large">✖️ Exit Record Mode</button>
+                        </div>
+
+                        <!-- Recording Indicator -->
+                        <div class="record-indicator" id="recordIndicator" style="display: none;">
+                            <div class="record-dot"></div>
+                            <span>Recording...</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Settings Tab -->
+            <div class="tab-content" id="settingsTab">
+                <section class="settings-section">
+                    <div class="settings-container">
+                        <h2 class="settings-title">Settings</h2>
+
+                        <div class="settings-content">
+                            <div class="settings-grid">
+                                <!-- Editor Settings -->
+                                <div class="settings-card">
+                                    <h3 class="settings-card-title">✏️ Editor</h3>
+                                    <div class="settings-card-content">
+                                        <div class="setting-item">
+                                            <label>Font Family</label>
+                                            <select id="fontFamilySelect" class="control-select">
+                                                <optgroup label="Sans-Serif">
+                                                    <option value="Arial, sans-serif">Arial</option>
+                                                    <option value="'Helvetica Neue', Helvetica, Arial, sans-serif">Helvetica</option>
+                                                    <option value="Verdana, sans-serif">Verdana</option>
+                                                    <option value="Tahoma, sans-serif">Tahoma</option>
+                                                    <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+                                                    <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Segoe UI</option>
+                                                </optgroup>
+                                                <optgroup label="Serif">
+                                                    <option value="'Times New Roman', Times, serif">Times New Roman</option>
+                                                    <option value="Georgia, serif">Georgia</option>
+                                                    <option value="'Palatino Linotype', 'Book Antiqua', Palatino, serif">Palatino</option>
+                                                    <option value="'Garamond', serif">Garamond</option>
+                                                </optgroup>
+                                                <optgroup label="Display">
+                                                    <option value="'Spicy Rice', display">Spicy Rice</option>
+                                                </optgroup>
+                                                <optgroup label="Monospace">
+                                                    <option value="'Courier New', monospace">Courier New</option>
+                                                    <option value="'Monaco', monospace">Monaco</option>
+                                                    <option value="'Menlo', monospace">Menlo</option>
+                                                    <option value="'Consolas', monospace">Consolas</option>
+                                                    <option value="'Ubuntu Mono', monospace">Ubuntu Mono</option>
+                                                    <option value="'Lucida Console', monospace">Lucida Console</option>
+                                                </optgroup>
+                                            </select>
+                                        </div>
+                                        <div class="setting-item">
+                                            <label>Font Size</label>
+                                            <select id="fontSizeSelect" class="control-select">
+                                                <option value="14">Small (14px)</option>
+                                                <option value="16" selected>Medium (16px)</option>
+                                                <option value="18">Large (18px)</option>
+                                                <option value="20">Extra Large (20px)</option>
+                                            </select>
+                                        </div>
+                                        <div class="setting-item">
+                                            <label>Line Height</label>
+                                            <select id="lineHeightSelect" class="control-select">
+                                                <option value="1.5">Compact</option>
+                                                <option value="1.8" selected>Normal</option>
+                                                <option value="2">Spacious</option>
+                                            </select>
+                                        </div>
+                                        <div class="setting-item">
+                                            <label class="toggle-label">
+                                                <input type="checkbox" id="lineNumbersToggle">
+                                                <span>Show Line Numbers</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Appearance Settings -->
+                                <div class="settings-card">
+                                    <h3 class="settings-card-title">🎨 Appearance</h3>
+                                    <div class="settings-card-content">
+                                        <div class="setting-item">
+                                            <label>Color Mode</label>
+                                            <div class="color-mode-selector">
+                                                <label class="radio-label">
+                                                    <input type="radio" name="colorMode" value="preset" checked>
+                                                    <span>Preset</span>
+                                                </label>
+                                                <label class="radio-label">
+                                                    <input type="radio" name="colorMode" value="custom">
+                                                    <span>Custom</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="setting-item" id="presetThemeSelector">
+                                            <label>Theme Preset</label>
+                                            <div class="theme-buttons">
+                                                <button class="theme-btn" data-theme="dark" title="Dark Studio">🌑</button>
+                                                <button class="theme-btn" data-theme="light" title="Light Studio">☀️</button>
+                                                <button class="theme-btn" data-theme="forest" title="Forest Green">🌲</button>
+                                                <button class="theme-btn" data-theme="sunset" title="Sunset Orange">🌅</button>
+                                            </div>
+                                        </div>
+                                        <div class="setting-item" id="customColorsSection" style="display: none;">
+                                            <label>Custom Colors</label>
+                                            <div class="color-picker-list">
+                                                <div class="color-picker-item">
+                                                    <label class="color-picker-label">Primary</label>
+                                                    <input type="color" id="colorPrimary" class="color-picker-input" value="#ff006e">
+                                                </div>
+                                                <div class="color-picker-item">
+                                                    <label class="color-picker-label">Primary Dark</label>
+                                                    <input type="color" id="colorPrimaryDark" class="color-picker-input" value="#d10055">
+                                                </div>
+                                                <div class="color-picker-item">
+                                                    <label class="color-picker-label">Secondary</label>
+                                                    <input type="color" id="colorSecondary" class="color-picker-input" value="#8338ec">
+                                                </div>
+                                                <div class="color-picker-item">
+                                                    <label class="color-picker-label">Accent</label>
+                                                    <input type="color" id="colorAccent" class="color-picker-input" value="#00d9ff">
+                                                </div>
+                                                <div class="color-picker-item">
+                                                    <label class="color-picker-label">Success</label>
+                                                    <input type="color" id="colorSuccess" class="color-picker-input" value="#00ff41">
+                                                </div>
+                                                <div class="color-picker-item">
+                                                    <label class="color-picker-label">Danger</label>
+                                                    <input type="color" id="colorDanger" class="color-picker-input" value="#ff006e">
+                                                </div>
+                                                <div class="color-picker-item">
+                                                    <label class="color-picker-label">Warning</label>
+                                                    <input type="color" id="colorWarning" class="color-picker-input" value="#ffbe0b">
+                                                </div>
+                                                <div class="color-picker-item">
+                                                    <label class="color-picker-label">Background Primary</label>
+                                                    <input type="color" id="colorBgPrimary" class="color-picker-input" value="#0a0e27">
+                                                </div>
+                                                <div class="color-picker-item">
+                                                    <label class="color-picker-label">Background Secondary</label>
+                                                    <input type="color" id="colorBgSecondary" class="color-picker-input" value="#1a1f3a">
+                                                </div>
+                                                <div class="color-picker-item">
+                                                    <label class="color-picker-label">Background Tertiary</label>
+                                                    <input type="color" id="colorBgTertiary" class="color-picker-input" value="#252d4a">
+                                                </div>
+                                                <div class="color-picker-item">
+                                                    <label class="color-picker-label">Text Primary</label>
+                                                    <input type="color" id="colorTextPrimary" class="color-picker-input" value="#ffffff">
+                                                </div>
+                                                <div class="color-picker-item">
+                                                    <label class="color-picker-label">Text Secondary</label>
+                                                    <input type="color" id="colorTextSecondary" class="color-picker-input" value="#b0b5c0">
+                                                </div>
+                                                <div class="color-picker-item">
+                                                    <label class="color-picker-label">Border Color</label>
+                                                    <input type="color" id="colorBorderColor" class="color-picker-input" value="#3a4562">
+                                                </div>
+                                            </div>
+                                            <button id="resetColorsBtn" class="btn btn-small btn-secondary" style="margin-top: 12px;">Reset to Preset</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- AI Settings -->
+                                <div class="settings-card">
+                                    <h3 class="settings-card-title">🤖 AI Rhyme Detection</h3>
+                                    <div class="settings-card-content">
+                                        <div class="setting-item">
+                                            <label class="toggle-label">
+                                                <input type="checkbox" id="aiRhymeEnabled">
+                                                <span>Enable AI Rhyme Detection</span>
+                                            </label>
+                                        </div>
+                                        <div class="setting-item">
+                                            <label>OpenRouter API Key (Qwen)</label>
+                                            <input 
+                                                type="password" 
+                                                id="aiApiKey" 
+                                                class="control-input" 
+                                                placeholder="Enter your OpenRouter API key"
+                                            >
+                                            <small style="color: var(--text-secondary); margin-top: 4px; display: block;">
+                                                Your API key is stored locally in your browser and never sent to our servers. Get a key at <a href="https://openrouter.ai" target="_blank" style="color: var(--accent);">openrouter.ai</a>
+                                            </small>
+                                        </div>
+                                        <div class="setting-item">
+                                            <button id="saveAiSettingsBtn" class="btn btn-full btn-primary">Save AI Settings</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Project Settings -->
+                                <div class="settings-card">
+                                    <h3 class="settings-card-title">📁 Project</h3>
+                                    <div class="settings-card-content">
+                                        <div class="setting-item">
+                                            <button id="exportProjectBtn" class="btn btn-full btn-secondary">Export Project as JSON</button>
+                                        </div>
+                                        <div class="setting-item">
+                                            <button id="deleteProjectBtn" class="btn btn-full btn-danger">Delete Current Project</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- New Project Modal -->
+    <div id="newProjectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Project</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input 
+                    type="text" 
+                    id="newProjectName" 
+                    class="modal-input" 
+                    placeholder="Project name (e.g., 'Summer Vibes', 'Club Banger')"
+                    maxlength="50"
+                >
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-cancel">Cancel</button>
+                <button class="btn btn-primary" id="confirmNewProject">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="storage.js"></script>
+    <script src="aiRhymeDetector.js"></script>
+    <script src="rhymeDetector.js"></script>
+    <script src="RHYME_TEST_SUITE.js"></script>
+    <script src="VALIDATE_RHYME_SYSTEM.js"></script>
+    <script src="beatEmbedder.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
